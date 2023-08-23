@@ -18,13 +18,31 @@
     <el-row class="row">
       <a href="https://app.everpay.io/deposit">Go to deposit by EverPay</a>
     </el-row>
+    <hr>
     <el-row class="row">
       <el-col :span="4" :offset="10">
-        <el-input v-model="gistId" placeholder="Input gist id" />
+        <el-input v-model="datasetName" placeholder="Input Vector Dataset Name" />
       </el-col>
     </el-row>
     <el-row class="row">
-      <el-button type="primary" @click="upload_payload()">Click to Upload Your Gists</el-button>
+      <el-col :span="4" :offset="10">
+        <textarea  style="height:500px;width: 500px" v-model="datasetContent" placeholder="Input Vector Dataset Content" />
+      </el-col>
+    </el-row>
+    <el-row class="row">
+      <el-col :span="4" :offset="10">
+        <el-input v-model="catalog" placeholder="Input the catalog" />
+      </el-col>
+    </el-row>
+
+    <el-row class="row">
+      <el-col :span="4" :offset="10">
+        <el-input v-model="fileSource" placeholder="Input the file source link" />
+      </el-col>
+    </el-row>
+
+    <el-row class="row">
+      <el-button type="primary" @click="upload_payload()">Click to Upload the Vector Datset Item</el-button>
     </el-row>
     <el-row class="row">
       <el-col :span="8" :offset="10">
@@ -62,13 +80,13 @@ import Bignumber from 'bignumber.js'
 import axios from 'axios';
 
 // TODO: optimize here.
-const faasAxios = axios.create({
-  //baseURL: "http://localhost:4000/", // local
-  baseURL: 'https://faasbyleeduckgo.gigalixirapp.com', // online
-  headers: {
-    'Content-Type': 'application/json;charset=UTF-8',
-  },
-});
+// const faasAxios = axios.create({
+//   //baseURL: "http://localhost:4000/", // local
+//   baseURL: 'https://faasbyleeduckgo.gigalixirapp.com', // online
+//   headers: {
+//     'Content-Type': 'application/json;charset=UTF-8',
+//   },
+// });
 
 // import {payOrder} from "arseeding-js/cjs/payOrder";
 function getArseedUrl() {
@@ -96,8 +114,12 @@ export default {
       arseedUrl: getArseedUrl(),
       payload: {},
       url: "",
-      gistId: '',
-      gistOwnerId: '',
+      // gistId: '',
+      // gistOwnerId: '', 
+      datasetName: '', 
+      datasetContent: '',
+      fileSource: '',
+      catalog: '',
     };
   },
   watch: {
@@ -113,42 +135,28 @@ export default {
     }
   },
   methods: {
-    runFunc(){
-        let id = this.$route.query.id;
-        let type = this.$route.query.type;
-        if(type=="life"){
-          this.url = '/api/v1/run?name=PermaLife&func_name=get_life'
-        }else{
-          this.url = '/api/v1/run?name=PermaLife.Role&func_name=get_role'
-        }
-        console.log("query id is"+JSON.stringify(this.$route.query.id));
-        faasAxios.post(
-          this.url,
-          {params: [id]},
-        ).then(
-          value => 
-          {
-            console.log(value.data);
-            this.payload = value.data.result;
-          }
-        );
-    },
     async upload_payload() {
       const fee = await getBundleFee(this.arseedUrl, JSON.stringify(this.payload).length, this.selectedSymbol)
       const formatedFee = new Bignumber(fee.finalFee).dividedBy(new Bignumber(10).pow(fee.decimals)).toString()
       if (+this.balance >= +formatedFee) {
         // const reader = new FileReader();
         // const data = reader.result
-        await this.getGistContent()
+        // await this.genPayload()
+        let payload = this.datasetContent
         const ops = {
           tags: [
-            {name: "Operator",value: "ethereum/" + window.ethereum.selectedAddress}, 
-            {name: "Content-Type",value: "application/json"},
-            {name: "AppName",value: "FaaS"},
-            {name: "GistOwnerId",value: this.gistOwnerId}
+            // datsetName: '', 
+            // datsetContent: '',
+            // metadata: '',
+            {name: "app_name",value: "vetor_dataset"}, 
+            {name: "uploader",value: window.ethereum.selectedAddress}, 
+            {name: "uploader_type",value: "ethereum"},
+            {name: "origin_dataset_name",value: this.datasetName},
+            {name: "catalog",value: this.catalog},
+            {name: "fileSource",value: this.fileSource},
           ]
         }
-        const res = await this.instance.sendAndPay(this.arseedUrl, this.payload, this.selectedSymbol, ops)
+        const res = await this.instance.sendAndPay(this.arseedUrl, payload, this.selectedSymbol, ops)
         console.log(res)
 
         // // ----------- for test bug----------------
@@ -197,11 +205,12 @@ export default {
         this.balanceStack = balanceStack
       })
     },
-    async getGistContent () {
-      const result = await axios.get(`https://api.github.com/gists/${this.gistId}`)
-      this.gistOwnerId = result.data.history[0].user.id.toString()
-      this.payload = Buffer.from(JSON.stringify(result.data))
-    },
+    // async genPayload () {
+    //   this.payload = 
+    //   // const result = await axios.get(`https://api.github.com/gists/${this.gistId}`)
+    //   // this.gistOwnerId = result.data.history[0].user.id.toString()
+    //   // this.payload = Buffer.from(JSON.stringify(result.data))
+    // },
     viewItem (url) {
       window.open(url, '_blank').focus()
     },
@@ -227,8 +236,6 @@ export default {
       this.symbols = info.tokenList.map(token => token.symbol)
       this.selectedSymbol = this.symbols[0]
     })
-
-    this.runFunc({ params: [] });
 
     this.pubId = pubsub.subscribe('connected',async (msgName,data)=>{
       this.connected = true
