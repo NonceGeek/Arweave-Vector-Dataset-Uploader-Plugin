@@ -77,8 +77,6 @@ import Everpay from 'everpay'
 import { getBundleFee, getOrders } from 'arseeding-js'
 import Bignumber from 'bignumber.js'
 
-import axios from 'axios';
-
 // TODO: optimize here.
 // const faasAxios = axios.create({
 //   //baseURL: "http://localhost:4000/", // local

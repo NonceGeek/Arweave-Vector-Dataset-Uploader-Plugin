@@ -1,5 +1,5 @@
 {
-  "name": "vector-dataeet-item-arweave-upload-plugin",
+  "name": "vector-dataset-item-arweave-upload-plugin",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -30,7 +30,7 @@
     "vue-template-compiler": "^2.6.11"
   },
   "engines": {
-    "node": "^16.0.0"
+    "node": ">=16.0.0"
   },
   "eslintConfig": {
     "root": true,
