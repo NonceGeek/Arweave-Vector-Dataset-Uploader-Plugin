@@ -56,13 +56,13 @@
             type="primary"
             plain
             @click="copyTextToClipboard(`${arseedUrl}/${order.itemId}`)"
-          >Copy Link of Source Code</el-button>
+          >Copy Link of Gateway Link</el-button>
           <el-button
             class="view"
             type="success"
             plain
-            @click="viewItem(`${arseedUrl}/${order.itemId}`)"
-          >View Item</el-button>
+            @click="viewItem(`https://ai.movedid.build/?tx_id=${order.itemId}`)"
+          >View by KNN3</el-button>
           <!-- <a target="_blank" :href="`https://arweave.net/${order.itemId}`">By arweave gateway(when onChainStatus pending or success)</a> -->
           <!-- <div>{{JSON.stringify(order, null, 2)}}</div> -->
         </div>
@@ -146,12 +146,12 @@ export default {
             // datsetName: '', 
             // datsetContent: '',
             // metadata: '',
-            {name: "app_name",value: "vetor_dataset"}, 
+            {name: "app_name",value: "vector_dataset"}, 
             {name: "uploader",value: window.ethereum.selectedAddress}, 
             {name: "uploader_type",value: "ethereum"},
             {name: "origin_dataset_name",value: this.datasetName},
             {name: "catalog",value: this.catalog},
-            {name: "fileSource",value: this.fileSource},
+            {name: "file_source",value: this.fileSource},
           ]
         }
         const res = await this.instance.sendAndPay(this.arseedUrl, payload, this.selectedSymbol, ops)
