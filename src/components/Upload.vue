@@ -51,18 +51,26 @@
           :key="index"
           class="order"
         >
+          <span>index: {{index}}</span><br>
+          <span>tx id: {{order.itemId}}</span><br>
           <!-- <a style="margin-right:10px;" target="_blank" :href="`${arseedUrl}/${order.itemId}`">{{order.itemId}}</a> -->
-          <el-button
+          <!--<el-button
             type="primary"
             plain
             @click="copyTextToClipboard(`${arseedUrl}/${order.itemId}`)"
-          >Copy Link of Gateway Link</el-button>
+          >Copy Link of Gateway Link</el-button>-->
+          <el-button
+            type="primary"
+            plain
+            @click="viewItem(`${arseedUrl}/${order.itemId}`)"
+          >View the context by the Gateway</el-button>
           <el-button
             class="view"
             type="success"
             plain
-            @click="viewItem(`https://ai.movedid.build/?tx_id=${order.itemId}`)"
+            @click="viewItem(`https://ai.movedid.build/arweave_querier?tx_id=${order.itemId}`)"
           >View by KNN3</el-button>
+          <hr>
           <!-- <a target="_blank" :href="`https://arweave.net/${order.itemId}`">By arweave gateway(when onChainStatus pending or success)</a> -->
           <!-- <div>{{JSON.stringify(order, null, 2)}}</div> -->
         </div>
