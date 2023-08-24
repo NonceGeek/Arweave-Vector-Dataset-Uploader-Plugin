@@ -49,7 +49,6 @@
         <div
           v-for="(order, index) in orders"
           :key="index"
-          class="order"
         >
           <span>index: {{index}}</span><br>
           <span>tx id: {{order.itemId}}</span><br>
